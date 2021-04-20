@@ -87,7 +87,58 @@ Finally, we want to increase the ```machine_counts``` to know how many time that
 
 At the end of our ```RandomAgent()```, we create a dictionary with the results that we will be able to use in our plotting function to see and comapre the performance of our agents.
 
+```python:
+# create random agent
+class RandomAgent(object):
+    def __init__(self, env, max_iterations=2000):
+        self.env = env 
+        self.iterations = max_iterations 
+        
+    # let the agent take actions in the environment
+    def action(self):
+        # keep track of the rewards the agent generates and which machine it is using
+        machine_counts = np.zeros(self.env.k_machines)
+        
+        # store the reward the agent is generating
+        rewards= []
+        # store reward the agent is generating over time
+        avg_rewards = []
+        
+        for i in range(1, self.iterations+1):
+            machine = np.random.choice(self.env.k_machines)
+            reward = self.env.choose_machine(machine)
+            
+            # increasing the machine count to know how many time the machine has been used
+            machine_counts[machine] += 1 
+            
+            # append the results to the list rewards and avg_rewards
+            rewards.append(reward)
+            avg_rewards.append(sum(rewards)/len(rewards))
+            
+        # create a dictionary with the results to use our plotting function
+        return {'machines': machine_counts,
+                'rewards': rewards,
+                'avg_rewards': avg_rewards
+               }
+```
+Now that we have our random agent created we can create an instance and see how the agent behaves.
 
+```python:
+# create the instance
+random_agent = RandomAgent(env=environment, max_iterations=2000)
 
+# action the agent is taking
+ra_history= random_agent.action()
 
+# print
+print(f'total reward : {sum(ra_history["rewards"])}')
+
+total reward : 769.0
+```
+We can see that after a total of 2000 iterations, the agent made a total reward of 769 candy canes. But we can't tell which machine has been selected unless we plot it. This is the reason why we created the ```plot_history()``` function which takes the dictionary that the ```action()``` function returns and plots the average reward and how many times each machine was used.
+
+```python:
+# plot the history
+plot_history(ra_history)
+```
 
