@@ -4,6 +4,7 @@ This is a project which was inspired form the 2020 Christmas Kaggle Competition 
 
 This project is has been created as a 'code-along' for anyone who wants to gain a basic understanding on multi armed bandit and how it works.
 
+## Prerequisites and Imports
 The first step is to import the necessary libraries. These are commonly used ones so the experiement is reproducible.
 ```python: 
 import numpy as np
@@ -28,4 +29,5 @@ def plot_history(history):
     bchart.set_title('Chosen Actions')
 ```
 
-
+## Create the environment
+First we need to create an environment. We will set the probability of payout and how much the environment actually pays out.
