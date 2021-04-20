@@ -141,4 +141,17 @@ We can see that after a total of 2000 iterations, the agent made a total reward 
 # plot the history
 plot_history(ra_history)
 ```
+![random agent](https://github.com/mriffaud/Multi-Armed-Bandit/blob/main/images/random%20agent.png)
+
+We can run our random agent a couple of times. The barchart shows the agent has been pulling the arms randomly, the average cumulative reward is not increasing
+
+So now we have our base case scenarios with our random agent.
+
+![DumbElfUrl](https://p3y6v9e6.stackpathcdn.com/wp-content/uploads/2018/12/elves.gif "dumb Elf")
+
+## Create 'intelligent' agents
+### Epsilon Greedy Agent
+The first intelligent agent we are going to build is called epsilon greedy. This agent explores randomly the different variations/machines available and keep track of how much each machine is rewarding but becasue there is a limited amount of time or iterations, there is a point at which the agent has to stop exploring and start exploiting what it has learnt from the environment. Exploitation means taking the best possible actions based on the information your have available at the time while exploration means investigating the options available.
+
+What the epsilon greedy algorithm helps us to do is to solve one of the common situation in reinforment learning which is called the exploration/exploitation dilemma where you need to keep a balance between exploring your environment and exploiting it.
 
