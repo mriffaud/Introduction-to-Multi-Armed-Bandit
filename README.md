@@ -30,4 +30,50 @@ def plot_history(history):
 ```
 
 ## Create the environment
-First we need to create an environment. We will set the probability of payout and how much the environment actually pays out.
+First we need to create a class and environment. We will set the probability of payout and how much the environment actually pays out.
+We start with creating a class called ```Env()``` and the ```__init__()``` constructor which is going to store our two arguments: the rewards probabilitites and the actual rewards.
+The reason this technique is called a multi armed bandit is because the agent has multiple options to chose from so in our implementation of the environment we also want to know how many machines are available. Therefore, our next step is to check that the length of our arguments ```rewards_probas``` and ```rewards``` are equal, if not, the the environment will be invalid and the function will return an error message.
+We then pass the arguments ```rewards_probas``` and ```rewards``` to the environment and the number of machines that are available: ```k_machines```
+        
+Now that we have our environment ready we can build an agent to interact with it so we are going to define a function called ```choose_machine()```. In this function, we create an ```if statement``` to return an error message if any machine is less than 0 or greater than the total number of machines as this would be outside our specified environment. If no exception is raised, the function returns the ```rewards``` for that machine. In this example each machine is internally guided by a reward rate so we generate any ramdom number and if that ramdom number is less than the reward probability of that particular machine then it gives the reward as stated in the reward list otherwise it gives you zero.
+
+```python:
+# create a class for the environment that contains the probability to get a reward and the actual rewards
+class Env(object):
+    def __init__(self, prob_reward, rewards):
+        if len(prob_reward) != len(rewards): 
+            raise Exception(f'size of reward probability: {len(prob_reward)} does not does match size of rewards: {len(rewards)}')
+        
+        # pass arguments to the environment
+        self.prob_reward = prob_reward
+        self.rewards = rewards
+        self.k_machines = len(rewards)
+        
+    # define function to specify the machine the elf is going to use 
+    def choose_machine(self, machine):
+        if machine < 0 or machine > self.k_machines:
+            raise Exception(f'machine must be a value between 0 and {self.k_machines -1}') # -1 because 0 counts as a number
+        return self.rewards[machine] if np.random.random() < self.prob_reward[machine] else 0.0
+```
+
+Now that we have our class we can create the environment which is going to make it more understandable. We create an environment with the rewards probabilities and the rewards:
+```python:
+environment = Env(prob_reward=[0.01, 0.05, 0.20, 0.50, 0.65, 0.90], 
+                  rewards=[1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+```
+This simply means that the first machine has a probability of 0.01% chance to give you 1, in our example this would be 1 candy cane.
+
+The objectif of a multi armed bandit is that at the end of the day the agent will be able to make the wisest decision and choose the machine that has the highest probability of payout. In this example it is very easy for a human to determine that the best machine to use in the machine number 6 as it has a 90% of rewarding us.
+
+Since we have created the environment where we stated the rewards probabilities we can see that the best machine to use is the machine number 6 but in reality we do not know the rewards probabilities therefore it is more challenging to know which machine to chose from and how often. This is the reason why building an agent is a great tool to automatically learn the pay rate for each machine and also take optimal actions.
+
+Now to the fun part! Since we have our class and environment the next step is to build our agent, in this context it is an elf but we want to build different variants of agents/elves with different level of intelligence to illustrate the multi armed bandit problem.
+
+So first we are going to build a base line agent that will enable us to compare its performance with our intelligent ones.
+
+## Create a base line agent
+
+
+
+
+
