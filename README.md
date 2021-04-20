@@ -155,3 +155,51 @@ The first intelligent agent we are going to build is called epsilon greedy. This
 
 What the epsilon greedy algorithm helps us to do is to solve one of the common situation in reinforment learning which is called the exploration/exploitation dilemma where you need to keep a balance between exploring your environment and exploiting it.
 
+The first step is to create a class called ```EpsilonGreedyAgent()```. In the initialiser, we will have the same as in our random agent, namely the constructor, environment and maximum iterations but also epsilon. The way this parameter works is that for epsilon with epsilon probability it explores and with 1 minus epsilon probability it exploites. In our example, the epsilon parameter is set to 0.01 as default which means that for 1% of the time it will explore the environment and 99% it will exploite what it has learnt during the exploration. 
+        
+As we said our intelligent agent has to keep track of the rewards when exploring the environment, the way we do that is by using the Q values which gives you the pay rate for each of the machine. In other words, it the Q value provides the reward per iteration.
+Similarly as for the random agent we create a list that stores all the rewards and cumulative average reward.
+        
+        #So now to the fun part! Like the way epsilon parameter works in epsilon greedy is that for epsilon with epsilon 
+        #probability it explores and with 1 minus epsilon probability it exploites. In this example it means that out of a hundred
+        #steps the agent is going to take a random action instead of the wisest action it knows so far. This is important because 
+        #the best known action the agent knows so far may not be the actual one therefore if it explore more it can identify another arm
+        #that is better than the one it knows now. But becasue we have a limited amount of time in the environmnet we do not want to 
+        #spend too long exploring otherwise we will consume all the time steps and won't make the most amount of reward
+        
+        #the way we can use it is inside a for loop
+        for i in range(1, self.iterations+1):
+            machine = np.random.choice(self.env.k_machines) if np.random.random() < self.epsilon else np.argmax(q_values)
+            #arm = np.random.choice(self.env.k_arms): we make a random choice from arms available
+            #if the random number is less than epsilon, we want to explore
+            #otherwise we want to take the actionthat has the maximum reward value which is stored in q_values
+            #argmax reatin the index of the Q values where the value is the highest.
+            
+            #So all that the line is doing is genearting a random number, check if this number is less than epsilon and then 
+            #take a random action or the action with the maximum q value with is the highest known pay rate
+            
+            #next we still want to know the reward the agent generates each step
+            reward = self.env.choose_machine(machine)
+            
+            #we are going to increase the total we have obtained by pulling the arm using the array up there
+            ##arm_rewards = np.zeros(self.env.k_arms)##
+            machine_rewards[machine] += reward #increase it by the reward generated
+            
+            #we do the same for the arm count
+            machine_counts[machine] += 1 # we use plus 1 becasue we want to indicate that we have chosen this arm x number of times
+            
+            #now we use the arm_rewards and the arm_counts to evaluate the Q values for that particular arm 
+            q_values[machine] = machine_rewards[machine]/machine_counts[machine]
+            #is equal to the total reward we got by pulling to that arm divide by the number of times we have pulled the arm
+            #this gives us the pay rate for the arm
+            #It is a estimate of how valuable that particular arm is to our agent
+            
+            #from there it is similar as the random agent 
+            rewards.append(reward) #append the result to the list rewards
+            avg_rewards.append(sum(rewards)/len(rewards)) #append the average of all the rewards made
+            
+        #then we retain the same dictionary to plot the performance of our agent
+        return {'machines': machine_counts,#arms store arm_counts
+                'rewards': rewards, #rewards stores rewards made over time
+                'avg_rewards': avg_rewards #cum_rewards stores stores average cumulative rewards
+               }
