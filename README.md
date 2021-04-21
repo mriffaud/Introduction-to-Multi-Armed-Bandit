@@ -7,7 +7,7 @@ This is a project which was inspired form the 2020 Christmas Kaggle Competition 
 This project is has been created as a 'code-along' for anyone who wants to gain a basic understanding on multi armed bandit and how it works.
 
 ## Prerequisites and Imports
-The first step is to import the necessary libraries. These are commonly used ones so the experiement is reproducible.
+The first step is to import the necessary libraries. These are commonly used ones so the experiment is reproducible.
 ```python: 
 import numpy as np
 import matplotlib.pyplot as plt
