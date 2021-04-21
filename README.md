@@ -123,7 +123,7 @@ class RandomAgent(object):
                 'avg_rewards': avg_rewards
                }
 ```
-Now that we have our random agent created we can create an instance and see how the agent behaves.
+Now that we have our random agent ready, we can create an instance and see how the agent behaves.
 
 ```python:
 # create the instance
@@ -157,51 +157,152 @@ The first intelligent agent we are going to build is called epsilon greedy. This
 
 What the epsilon greedy algorithm helps us to do is to solve one of the common situation in reinforment learning which is called the exploration/exploitation dilemma where you need to keep a balance between exploring your environment and exploiting it.
 
-The first step is to create a class called ```EpsilonGreedyAgent()```. In the initialiser, we will have the same as in our random agent, namely the constructor, environment and maximum iterations but also epsilon. The way this parameter works is that for epsilon with epsilon probability it explores and with 1 minus epsilon probability it exploites. In our example, the epsilon parameter is set to 0.01 as default which means that for 1% of the time it will explore the environment and 99% it will exploite what it has learnt during the exploration. 
+The first step is to create a class called ```EpsilonGreedyAgent()```. In the initialiser, we will have the same as in our random agent, namely the constructor, environment and maximum iterations but also epsilon. The way this parameter works is that for epsilon with epsilon probability it explores and with 1 minus epsilon probability it exploites. In this example it means that out of a hundred steps or iterations, the agent is going to take one random action instead of the wisest action it knows so far. This is important because the best known action the agent is aware of at that time may not be the actual widest one therefore if it explores more it can identify another machine that is better than the one it knows at that step. However, because we have a limited amount of time in the environmnet we do not want to spend too long exploring otherwise we will consume all of the available time steps and won't cumulate the greatest amount of rewards.
         
-As we said our intelligent agent has to keep track of the rewards when exploring the environment, the way we do that is by using the Q values which gives you the pay rate for each of the machine. In other words, it the Q value provides the reward per iteration.
+As we said previously, our intelligent agent has to keep track of the rewards when exploring the environment, the way we do that is by using the Q values which gives you the pay rate for each of the machine. In other words, it the Q value provides the rewards per iteration.
 Similarly as for the random agent we create a list that stores all the rewards and cumulative average reward.
+
+Once we have all our trackers sorted, we can use the epsilon probability inside a for loop by generating a random number and if that random number is less than epsilon, we want to explore otherwise we want to take the action that has the maximum reward stored in ```q_values``` where ```argmax()``` returns the index of the Q values where the it is the highest.
+
+From there the rest of the codes are similar to our random agent where we store the reward the agent generates each step, we increase the total we have obtained by pulling the machine using ```reward```, we add 1 to ```machine_counts``` to indicate that the agent has chosen this machine x number of times. then, we use ```machine_rewards``` and the ```machine_counts``` to evaluate the Q values for that particular machine: ```q_values``` is equal to the total reward we got by using that machine divided by the number of times we have used the machine, this gives us the pay rate for that machine. It is an estimation of how valuable that particular machine is to our agent.
+            
+Finally, we retain the same dictionary as for the random agent to plot the performance of our agent.
+
+```python:
+# create epsilon greedy agent
+class EpsilonGreedyAgent(object):
+    def __init__(self, env, max_iterations=2000, epsilon=0.01):
+        self.env = env 
+        self.iterations = max_iterations
+        self.epsilon = epsilon
         
-        #So now to the fun part! Like the way epsilon parameter works in epsilon greedy is that for epsilon with epsilon 
-        #probability it explores and with 1 minus epsilon probability it exploites. In this example it means that out of a hundred
-        #steps the agent is going to take a random action instead of the wisest action it knows so far. This is important because 
-        #the best known action the agent knows so far may not be the actual one therefore if it explore more it can identify another arm
-        #that is better than the one it knows now. But becasue we have a limited amount of time in the environmnet we do not want to 
-        #spend too long exploring otherwise we will consume all the time steps and won't make the most amount of reward
+    # let the agent take actions in the environment
+    def action(self):
+        # initialise the q_values
+        q_values = np.zeros(self.env.k_machines)
+        # keep track of total reward generated by each machine
+        machine_rewards = np.zeros(self.env.k_machines)
+        # keep track of the rewards the agent generates and which machine it is using
+        machine_counts = np.zeros(self.env.k_machines)
         
-        #the way we can use it is inside a for loop
+        # store the reward the agent is generating
+        rewards= []
+        # store reward the agent is generating over time
+        avg_rewards = []
+        
         for i in range(1, self.iterations+1):
             machine = np.random.choice(self.env.k_machines) if np.random.random() < self.epsilon else np.argmax(q_values)
-            #arm = np.random.choice(self.env.k_arms): we make a random choice from arms available
-            #if the random number is less than epsilon, we want to explore
-            #otherwise we want to take the actionthat has the maximum reward value which is stored in q_values
-            #argmax reatin the index of the Q values where the value is the highest.
             
-            #So all that the line is doing is genearting a random number, check if this number is less than epsilon and then 
-            #take a random action or the action with the maximum q value with is the highest known pay rate
-            
-            #next we still want to know the reward the agent generates each step
+            # store information
             reward = self.env.choose_machine(machine)
-            
-            #we are going to increase the total we have obtained by pulling the arm using the array up there
-            ##arm_rewards = np.zeros(self.env.k_arms)##
-            machine_rewards[machine] += reward #increase it by the reward generated
-            
-            #we do the same for the arm count
-            machine_counts[machine] += 1 # we use plus 1 becasue we want to indicate that we have chosen this arm x number of times
-            
-            #now we use the arm_rewards and the arm_counts to evaluate the Q values for that particular arm 
+            machine_rewards[machine] += reward 
+            machine_counts[machine] += 1
             q_values[machine] = machine_rewards[machine]/machine_counts[machine]
-            #is equal to the total reward we got by pulling to that arm divide by the number of times we have pulled the arm
-            #this gives us the pay rate for the arm
-            #It is a estimate of how valuable that particular arm is to our agent
+        
+            # append the results to the list rewards and avg_rewards
+            rewards.append(reward)
+            avg_rewards.append(sum(rewards)/len(rewards))
             
-            #from there it is similar as the random agent 
-            rewards.append(reward) #append the result to the list rewards
-            avg_rewards.append(sum(rewards)/len(rewards)) #append the average of all the rewards made
-            
-        #then we retain the same dictionary to plot the performance of our agent
-        return {'machines': machine_counts,#arms store arm_counts
-                'rewards': rewards, #rewards stores rewards made over time
-                'avg_rewards': avg_rewards #cum_rewards stores stores average cumulative rewards
+        # create a dictionary with the results to use our plotting function
+        return {'machines': machine_counts,
+                'rewards': rewards,
+                'avg_rewards': avg_rewards
                }
+```
+Now we create an instance for the epsilon greedy agent to see its behaviour:
+
+```python:
+# create an instance of the epsilon greedy agent
+egreedy_agent = EpsilonGreedyAgent(env=environment, max_iterations=2000, epsilon=0.1)
+eg_history = egreedy_agent.action()
+
+# print
+print(f'total reward : {sum(eg_history["rewards"])}')
+
+total reward : 1639.0
+```
+
+```python:
+#let's call plot_history to see what actually happened
+plot_history(eg_history)
+```
+![epsilon greedy agent](https://github.com/mriffaud/Introduction-to-Multi-Armed-Bandit/blob/main/images/epsilon%20greedy%20agent.png)
+
+We can see that our epsilon greedy agent has generated a much larger amount of rewards than the random agent. We can also see that the average reward for the epsilon greedy agent is constantly improving until reaching the optimal action and hovering around 0.8 average reward per action. From the plot of the machine count we notice that the agent has settled to make the best of the machine 5 and used it a lot more than any other machines available. Looking back at the rewards probabilities, this is because the machine number 56 has 90% chance to reward our agent with a candy cane.
+
+### Epsilon Greedy Agent with decay
+Another variant of the epsilon greedy is epsilon greedy with decay which reduces the probability of exploration over time because once you have learnt enough action values you don't need to keep exploring. Thus, there is a point at which the agent should have explored its environment enough and knows the best action to choose from and therefore the exploration rate should reduce. Otherwise, the agent waste time (iterations) that should be used to make an informed decision making a random one which ultimatly is going to limit the total amount of final reward.
+
+So using excatly the same codes as for the epsilon greedy agent above, we introduce the decay constant in our class ```EpsilonGreedyDecayAgent()```. We create our initialiser and add the ```decay``` constant: it should be a number between 0 and 1 and a ```decay_interval``` so after every decay interval time steps this will decay ```epsilon```.
+After we evaluate everything in the for loop, we create an if statement for the decay of epsilon. For this, we use the mod (or modulo) which is the is the remainder of a division, thus if the iteration mod the decay interval is zero than it has gone through a decay interval time step therefore we multiply ```epsilon``` by a ```decay_interval``` which reduce ```epsilon``` and consequently the exploration rate.
+        
+Finally  we retain the same dictionary to plot the agent's performance.
+
+```python:
+# create epsilon greedy agent with decay
+class EpsilonGreedyDecayAgent(object):
+    def __init__(self, env, max_iterations=2000, epsilon=0.01, decay=0.001, decay_interval=50):
+        self.env = env 
+        self.iterations = max_iterations
+        self.epsilon = epsilon
+        self.decay = decay
+        self.decay_interval = decay_interval
+        
+    # let the agent take actions in the environment
+    def action(self):
+        # initialise the q_values
+        q_values = np.zeros(self.env.k_machines)
+        # keep track of total reward generated by each machine
+        machine_rewards = np.zeros(self.env.k_machines)
+        # keep track of the rewards the agent generates and which machine it is using
+        machine_counts = np.zeros(self.env.k_machines)
+        
+        # store the reward the agent is generating
+        rewards= []
+        # store reward the agent is generating over time
+        avg_rewards = []
+        
+        for i in range(1, self.iterations+1):
+            machine = np.random.choice(self.env.k_machines) if np.random.random() < self.epsilon else np.argmax(q_values)
+            
+            # store information
+            reward = self.env.choose_machine(machine)
+            machine_rewards[machine] += reward 
+            machine_counts[machine] += 1
+            q_values[machine] = machine_rewards[machine]/machine_counts[machine]
+        
+            # append the results to the list rewards and avg_rewards
+            rewards.append(reward)
+            avg_rewards.append(sum(rewards)/len(rewards))
+            
+            # if statement for the decay of epsilon at interval step time
+            if i%self.decay_interval == 0:
+              self.epsilon = self.epsilon * self.decay
+              
+        # create a dictionary with the results to use our plotting function
+        return {'machines': machine_counts,
+                'rewards': rewards,
+                'avg_rewards': avg_rewards
+               }
+```
+We can now create an instance for the ```EpsilonGreedyDecayAgent()``` to look at its behaviour:
+
+```python:
+# create an instance of the epsilon greedy agent with decay
+egreedyd_agent = EpsilonGreedyDecayAgent(env=environment, max_iterations=2000, epsilon=0.01, decay=0.001, decay_interval= 50)
+egd_history = egreedyd_agent.action()
+
+# print total rewards and charts
+print(f'total reward : {sum(egd_history["rewards"])}')
+
+total reward : 1781.0
+```
+
+```python:
+#let's call plot_history to see what actually happened
+plot_history(egd_history)
+```
+![epsilon greedy agent with decay.](https://github.com/mriffaud/Introduction-to-Multi-Armed-Bandit/blob/main/images/epsilon%20greedy%20agent%20with%20decay.png)
+
+
+
