@@ -145,9 +145,9 @@ plot_history(ra_history)
 ```
 ![random agent](https://github.com/mriffaud/Multi-Armed-Bandit/blob/main/images/random%20agent.png)
 
-We can run our random agent a couple of times. The barchart shows the agent has been pulling the arms randomly, the average cumulative reward is not increasing
+The barchart shows the agent has been using the machines randomly and the average cumulative reward is not increasing over time.
 
-So now we have our base case scenarios with our random agent.
+So now that we have our base case scenario with our random agent, let's build our 'intelligent' agents.
 
 ## Create 'intelligent' agents
 ### Epsilon Greedy Agent
