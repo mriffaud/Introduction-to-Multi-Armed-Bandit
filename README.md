@@ -2,7 +2,7 @@
 
 ![multi armed bandit](https://github.com/mriffaud/Multi-Armed-Bandit/blob/main/images/multi%20armed%20bandit.png)
 
-This is a project which was inspired form the 2020 Christmas Kaggle Competition where two teams of elves have to collect as many candy canes as possible from vending machines with different rewards probabilities. The team with the most candy win.
+This is a project which was inspired from the 2020 Christmas Kaggle Competition where two teams of elves have to collect as many candy canes as possible from vending machines with different rewards probabilities. The team with the most candy win.
 
 This project is has been created as a 'code-along' for anyone who wants to gain a basic understanding on multi armed bandit and how it works.
 
