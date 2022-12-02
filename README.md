@@ -147,8 +147,6 @@ plot_history(ra_history)
 
 The barchart shows the agent has been using the machines randomly and the average cumulative reward is not increasing over time.
 
-![DumbElfUrl](https://p3y6v9e6.stackpathcdn.com/wp-content/uploads/2018/12/elves.gif "dumb Elf")
-
 So now that we have our base case scenario with our random agent, let's build our 'intelligent' agents.
 
 ## Create 'intelligent' agents
@@ -307,5 +305,3 @@ plot_history(egd_history)
 We can see that our epsilon greedy agent with decay has generated a greater amount of rewards than the two previous agents. While the epsilon greedy agent was constantly improving its average reward over the 2000 iterations, we notice that in the case of the epsilon greedy agent with decay reducing the exploration time has significantly improve the learning time as by the 100th step the agent had already learnt that the machine number 5 was the one providing the best reward so the agent was able to use that knowledge without wasting iterations making random actions and therefore maximising its reward. Thus ```epsilon``` and ```decay_interval``` become the hyperparameters that we would need to tune depending on the problem we are trying to solve.
 
 Please note that if you re-run the ```EpsilonGreedyDecayAgent()``` without making any amendment to the codes, the results will keep changing. This is because there is a part of randomness in our models.
-
-![ElfUrl](https://i.gifer.com/1qMX.gif)
