@@ -308,4 +308,4 @@ We can see that our epsilon greedy agent with decay has generated a greater amou
 
 Please note that if you re-run the ```EpsilonGreedyDecayAgent()``` without making any amendment to the codes, the results will keep changing. This is because there is a part of randomness in our models.
 
-![intelligent elf]([https://images.gr-assets.com/hostedimages/1380364773ra/716566.gif](https://i.gifer.com/1GTU.gif)https://i.gifer.com/1GTU.gif)
+![intelligent elf](https://i.gifer.com/1GTU.gif)
